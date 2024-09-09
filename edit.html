@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Edit Financial Data</title>
+
+    <!-- Tailwind CSS for styling -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #f4f7fb;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #5f72be;
+            color: white;
+        }
+
+        .content {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .section {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #5f72be;
+        }
+
+        .input-field {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .input-label {
+            font-weight: 700;
+            margin-right: 15px;
+            flex-basis: 30%;
+        }
+
+        .input-box {
+            flex-basis: 70%;
+        }
+
+        .input-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            background-color: #5f72be;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: #4c5db2;
+        }
+
+        .table-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .edit-btn {
+            color: #4c5db2;
+            cursor: pointer;
+        }
+
+        .delete-btn {
+            color: red;
+            cursor: pointer;
+        }
+
+        .chart-container {
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        .dollar-sign {
+            display: inline-block;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header with Edit Button -->
+    <header class="header">
+        <h1 class="text-3xl font-bold">Edit Your Financial Data</h1>
+        <button class="btn" onclick="window.location.href = 'edit.html';">Edit Data</button>
+    </header>
+
+    <!-- Main Content -->
+    <div class="content">
+
+        <!-- Edit Annual Salary Section -->
+        <div class="section">
+            <h2 class="section-title">Annual Salary</h2>
+            <div class="input-field">
+                <label class="input-label" for="annualSalary">Current Salary</label>
+                <div class="input-box">
+                    <span class="dollar-sign">$</span>
+                    <input type="text" id="annualSalary" name="annualSalary" value="80,000" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tax Section with Default Row and Dynamic Row Addition -->
+        <div class="section">
+            <h2 class="section-title">Manage Taxes</h2>
+            <div id="taxTable">
+                <div class="table-row">
+                    <span>1</span>
+                    <input type="text" value="Taxes" readonly class="input-box" style="width: 30%;">
+                    <input type="number" class="input-box" id="taxPercentage" value="10" style="width: 15%;">%
+                    <span class="dollar-sign">$</span>
+                    <input type="text" value="500" class="input-box tax-amount" style="width: 20%;">
+                    <i class="edit-btn" onclick="editRow(this)">✏️</i>
+                    <i class="delete-btn" onclick="confirmDelete(1)">🗑️</i>
+                </div>
+            </div>
+            <button class="btn" id="addRow">+ Add Row</button>
+        </div>
+
+        <!-- Pie Chart Section (Live Updating) -->
+        <div class="section">
+            <h2 class="section-title">Live Expense Distribution</h2>
+            <div class="chart-container">
+                <canvas id="expensePieChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Line Chart Section (Live Updating) -->
+        <div class="section">
+            <h2 class="section-title">Expense Over Time</h2>
+            <div class="chart-container">
+                <canvas id="expenseLineChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="section">
+            <button class="btn" id="submitBtn">Submit & View Graphs</button>
+        </div>
+
+    </div>
+
+    <script>
+        let rowCount = 1;
+
+        // Add a new row dynamically
+        document.getElementById('addRow').addEventListener('click', () => {
+            rowCount++;
+            const newRow = document.createElement('div');
+            newRow.classList.add('table-row');
+            newRow.innerHTML = `
+                <span>${rowCount}</span>
+                <input type="text" placeholder="Title" class="input-box" style="width: 30%;">
+                <input type="number" placeholder="%" class="input-box" style="width: 15%;">%
+                <span class="dollar-sign">$</span>
+                <input type="text" value="0" class="input-box tax-amount" style="width: 20%;">
+                <i class="edit-btn" onclick="editRow(this)">✏️</i>
+                <i class="delete-btn" onclick="confirmDelete(${rowCount})">🗑️</i>
+            `;
+            document.getElementById('taxTable').appendChild(newRow);
+            updateGraphs();
+        });
+
+        // Confirmation for delete action
+        function confirmDelete(rowNumber) {
+            if (confirm('Are you sure you want to delete this row?')) {
+                document.querySelector(`#taxTable .table-row:nth-child(${rowNumber})`).remove();
+                updateGraphs();
+            }
+        }
+
+        // Edit Row functionality
+        function editRow(editIcon) {
+            const row = editIcon.closest('.table-row');
+            const inputs = row.querySelectorAll('input');
+            inputs.forEach(input => input.removeAttribute('readonly'));
+        }
+
+        // Initialize Pie Chart
+        const pieCtx = document.getElementById('expensePieChart').getContext('2d');
+        const expensePieChart = new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Taxes', 'Other Expenses'],
+                datasets: [{
+                    data: [50, 50],
+                    backgroundColor: ['#5f72be', '#ff6384'],
+                }]
+            }
+        });
+
+        // Initialize Line Chart
+        const lineCtx = document.getElementById('expenseLineChart').getContext('2d');
+        const expenseLineChart = new Chart(lineCtx, {
+            type: 'line',
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May'],
+                datasets: [{
+                    label: 'Expenses Over Time',
+                    data: [500, 550, 600, 650, 700],
+                    borderColor: '#5f72be',
+                    fill: false
+                }]
+            }
+        });
+
+        // Update both graphs as the user updates inputs
+        document.querySelectorAll('.input-box').forEach(input => {
+            input.addEventListener('input', updateGraphs);
+        });
+
+        function updateGraphs() {
+            const taxAmounts = [...document.querySelectorAll('.tax-amount')].map(input => parseInt(input.value.replace(/,/g, '')) || 0);
+            const totalExpenses = taxAmounts.reduce((acc, curr) => acc + curr, 0);
+
+            // Update Pie Chart
+            expensePieChart.data.datasets[0].data = [totalExpenses, 10000 - totalExpenses];
+            expensePieChart.update();
+
+            // Update Line Chart with new values
+            expenseLineChart.data.datasets[0].data = taxAmounts.slice(0, 5); // Limit to 5 for example
+            expenseLineChart.update();
+        }
+
+        // Submit Data and Redirect
+        document.getElementById('submitBtn').addEventListener('click', () => {
+            window.location.href = "graph.html";
+        });
+
+        // Add commas to numbers
+        document.getElementById('annualSalary').addEventListener('input', function() {
+            this.value = formatNumberWithCommas(this.value.replace(/,/g, ''));
+        });
+
+        function formatNumberWithCommas(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+    </script>
+
+</body>
+</html>
