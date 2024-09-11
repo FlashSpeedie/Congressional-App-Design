@@ -1,17 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Financial Planner Dashboard</title>
+    <title>Login - Financial Planner</title>
 
     <!-- Tailwind CSS for styling -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         body {
@@ -19,145 +16,144 @@
             background-color: #f4f7fb;
         }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background-color: #5f72be;
-            color: white;
-        }
-
-        .content {
-            max-width: 1200px;
-            margin: auto;
-            padding: 20px;
-        }
-
-        .salary-box {
+        .login-box {
+            max-width: 400px;
+            margin: 100px auto;
             background-color: #ffffff;
-            border-radius: 10px;
             padding: 20px;
-            text-align: center;
-            margin-bottom: 30px;
+            border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .chart-box {
-            background-color: #ffffff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .chart-title {
+        .login-title {
             font-size: 1.5rem;
             font-weight: 600;
-            margin-bottom: 15px;
             color: #5f72be;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .input-box {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .login-btn {
+            background-color: #5f72be;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        .login-btn:hover {
+            background-color: #4c5db2;
+        }
+
+        .social-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            background-color: #ffffff;
+            border-radius: 0.375rem;
+            border: 1px solid #e0e0e0;
+            padding: 0.75rem 1rem;
+            transition: background-color 0.2s ease-in-out;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .register-link {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #5f72be;
+        }
+
+        .register-link a {
+            color: #5f72be;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        .register-link a:hover {
+            color: #4c5db2;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header with Login Button -->
-    <header class="header">
-        <h1 class="text-3xl font-bold">Financial Planner Dashboard</h1>
-        <a href="login.html" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Login</a>
-    </header>
+    <div class="login-box">
+        <h1 class="login-title">Login to Your Account</h1>
+        <form id="loginForm" method="POST" action="edit.html">
+            <div class="input-field">
+                <label class="input-label" for="email">Email</label>
+                <input type="email" id="email" name="email" class="input-box" required>
+            </div>
+            <div class="input-field">
+                <label class="input-label" for="password">Password</label>
+                <input type="password" id="password" name="password" class="input-box" required>
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+        </form>
 
-    <!-- Main Content -->
-    <div class="content">
-
-        <!-- Annual Salary -->
-        <div class="salary-box">
-            <h2 class="text-2xl font-bold">Annual Salary: $80,000</h2>
+        <!-- Register link -->
+        <div class="register-link">
+            Not have an Account? <a href="register.html">Register here</a>
         </div>
 
-        <!-- Example Graphs -->
-
-        <!-- Taxes Graph -->
-        <div class="chart-box">
-            <h3 class="chart-title">Monthly Taxes Overview</h3>
-            <canvas id="taxesChart"></canvas>
+        <!-- Google and Apple Login Buttons -->
+        <div class="social-btn" onclick="googleLogin()">
+            <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google" class="icon">
+            Login with Google
         </div>
-
-        <!-- Shopping Graph -->
-        <div class="chart-box">
-            <h3 class="chart-title">Shopping Expenses</h3>
-            <canvas id="shoppingChart"></canvas>
+        <div class="social-btn" onclick="appleLogin()">
+            <img src="https://img.icons8.com/ios-filled/50/000000/mac-os.png" alt="Apple" class="icon">
+            Login with Apple
         </div>
-
     </div>
 
     <script>
-        // Taxes Chart
-        const taxesCtx = document.getElementById('taxesChart').getContext('2d');
-        const taxesChart = new Chart(taxesCtx, {
-            type: 'line',
-            data: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                datasets: [{
-                    label: 'Taxes Paid',
-                    data: [500, 550, 600, 580, 590, 620, 610, 630, 640, 650, 660, 680],
-                    borderColor: '#5f72be',
-                    fill: false,
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Amount in USD ($)',
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Month',
-                        }
-                    }
-                }
-            }
-        });
+        // Simulated Google Login
+        function googleLogin() {
+            alert('Redirecting to Google Login...');
+            window.location.href = 'https://accounts.google.com/signin';
+        }
 
-        // Shopping Expenses Chart
-        const shoppingCtx = document.getElementById('shoppingChart').getContext('2d');
-        const shoppingChart = new Chart(shoppingCtx, {
-            type: 'line',
-            data: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                datasets: [{
-                    label: 'Shopping Expenses',
-                    data: [300, 350, 320, 310, 300, 280, 270, 290, 310, 320, 330, 340],
-                    borderColor: '#ff6384',
-                    fill: false,
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Amount in USD ($)',
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Month',
-                        }
-                    }
-                }
-            }
+        // Simulated Apple Login
+        function appleLogin() {
+            alert('Redirecting to Apple Login...');
+            window.location.href = 'https://appleid.apple.com/auth/signin';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Here you would validate the user credentials via backend authentication
+            // If successful, redirect to the edit page
+            window.location.href = "edit.html";
         });
     </script>
 

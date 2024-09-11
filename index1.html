@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Financial Planner Dashboard</title>
+
+    <!-- Tailwind CSS for styling -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #f4f7fb;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #5f72be;
+            color: white;
+        }
+
+        .content {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .salary-box {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-box {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .chart-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #5f72be;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header with Login Button -->
+    <header class="header">
+        <h1 class="text-3xl font-bold">Financial Planner Dashboard</h1>
+        <a href="login.html" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Login</a>
+    </header>
+
+    <!-- Main Content -->
+    <div class="content">
+
+        <!-- Annual Salary -->
+        <div class="salary-box">
+            <h2 class="text-2xl font-bold">Annual Salary: $80,000</h2>
+        </div>
+
+        <!-- Example Graphs -->
+
+        <!-- Taxes Graph -->
+        <div class="chart-box">
+            <h3 class="chart-title">Monthly Taxes Overview</h3>
+            <canvas id="taxesChart"></canvas>
+        </div>
+
+        <!-- Shopping Graph -->
+        <div class="chart-box">
+            <h3 class="chart-title">Shopping Expenses</h3>
+            <canvas id="shoppingChart"></canvas>
+        </div>
+
+    </div>
+
+    <script>
+        // Taxes Chart
+        const taxesCtx = document.getElementById('taxesChart').getContext('2d');
+        const taxesChart = new Chart(taxesCtx, {
+            type: 'line',
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                datasets: [{
+                    label: 'Taxes Paid',
+                    data: [500, 550, 600, 580, 590, 620, 610, 630, 640, 650, 660, 680],
+                    borderColor: '#5f72be',
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Amount in USD ($)',
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Month',
+                        }
+                    }
+                }
+            }
+        });
+
+        // Shopping Expenses Chart
+        const shoppingCtx = document.getElementById('shoppingChart').getContext('2d');
+        const shoppingChart = new Chart(shoppingCtx, {
+            type: 'line',
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                datasets: [{
+                    label: 'Shopping Expenses',
+                    data: [300, 350, 320, 310, 300, 280, 270, 290, 310, 320, 330, 340],
+                    borderColor: '#ff6384',
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Amount in USD ($)',
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Month',
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
