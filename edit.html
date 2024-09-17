@@ -114,6 +114,14 @@
             color: #00796b;
         }
 
+        .percent-sign {
+            position: absolute;
+            top: 50%;
+            right: 5px;
+            transform: translateY(-50%);
+            color: #00796b;
+        }
+
         .btn {
             background-color: #00796b;
             color: white;
@@ -131,10 +139,23 @@
         }
 
         .table-row {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr 0.5fr 1.5fr auto;
             align-items: center;
             margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .table-row input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            position: relative;
+        }
+
+        .table-row input:focus {
+            border-color: #00796b;
         }
 
         .delete-btn {
@@ -184,17 +205,19 @@
             </div>
         </div>
 
-        <!-- Taxes and Expense Section with Row Addition -->
+        <!-- Manage Expenses Section -->
         <div class="section">
             <h2 class="section-title">Manage Expenses</h2>
             <div id="expenseTable">
                 <div class="table-row">
-                    <input type="text" value="Taxes" class="input-box" readonly style="width: 30%;">
-                    <input type="number" class="input-box expense-percentage" id="taxPercentage" value="10"
-                        style="width: 15%;">%
+                    <input type="text" value="Taxes" class="input-box expense-title">
+                    <div class="input-box" style="position: relative;">
+                        <input type="number" value="10" class="input-box expense-percentage">
+                        <span class="percent-sign">%</span>
+                    </div>
                     <div class="input-box">
                         <span class="dollar-sign">$</span>
-                        <input type="text" value="500" class="input-box expense-amount" style="width: 80%;">
+                        <input type="number" value="500" class="input-box expense-amount">
                     </div>
                     <i class="delete-btn" onclick="confirmDelete(this)">🗑️</i>
                 </div>
@@ -204,8 +227,7 @@
 
         <!-- Submit Button -->
         <div class="section" style="text-align: center;">
-            <button class="btn" id="submitBtn" style="width: 100%; padding: 15px 20px; font-size: 1.2rem;">Submit &
-                Save</button>
+            <button class="btn" id="submitBtn" style="width: 100%; padding: 15px 20px; font-size: 1.2rem;">Submit & Save</button>
         </div>
 
     </div>
@@ -224,11 +246,14 @@
             const newRow = document.createElement('div');
             newRow.classList.add('table-row');
             newRow.innerHTML = `
-                <input type="text" placeholder="Expense Title" class="input-box" style="width: 30%;">
-                <input type="number" placeholder="%" class="input-box expense-percentage" style="width: 15%;">%
+                <input type="text" placeholder="Expense Title" class="input-box expense-title">
+                <div class="input-box" style="position: relative;">
+                    <input type="number" placeholder="%" class="input-box expense-percentage">
+                    <span class="percent-sign">%</span>
+                </div>
                 <div class="input-box">
                     <span class="dollar-sign">$</span>
-                    <input type="text" value="0" class="input-box expense-amount" style="width: 80%;">
+                    <input type="number" placeholder="Amount" class="input-box expense-amount">
                 </div>
                 <i class="delete-btn" onclick="confirmDelete(this)">🗑️</i>
             `;
@@ -243,8 +268,32 @@
             }
         }
 
-        // Submit Data and Save
+        // Submit and Save Data as JSON
         document.getElementById('submitBtn').addEventListener('click', () => {
+            const rows = document.querySelectorAll('.table-row');
+            const expenses = [];
+
+            rows.forEach((row) => {
+                const title = row.querySelector('.expense-title').value;
+                const percentage = row.querySelector('.expense-percentage').value;
+                const amount = row.querySelector('.expense-amount').value;
+
+                if (title && percentage && amount) {
+                    expenses.push({
+                        title: title,
+                        percentage: percentage,
+                        amount: amount
+                    });
+                }
+            });
+
+            const data = {
+                salary: document.getElementById('annualSalary').value,
+                expenses: expenses
+            };
+
+            console.log('Saved Data:', JSON.stringify(data));
+            window.localStorage.setItem('expenseData', JSON.stringify(data));
             alert('Data saved successfully!');
         });
 
@@ -260,147 +309,4 @@
 
 </body>
 
-</html>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Edit Financial Data - Yearly Expense Tracker</title>
-
-    <!-- Tailwind CSS for styling -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-
-    <style>
-        body {
-            font-family: 'Lato', sans-serif;
-            background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .content {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .section {
-            background-color: #ffffff;
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .section-title {
-            font-size: 1.6rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #00796b;
-            text-align: center;
-        }
-
-        /* Updated Styling for the Manage Expenses Section */
-        .table-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr auto;
-            align-items: center;
-            margin-bottom: 15px;
-            gap: 10px;
-        }
-
-        .table-row input {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .table-row input:focus {
-            border-color: #00796b;
-        }
-
-        .input-label {
-            font-weight: 700;
-            margin-right: 10px;
-        }
-
-        .delete-btn {
-            color: red;
-            cursor: pointer;
-        }
-
-        .btn {
-            background-color: #00796b;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn:hover {
-            background-color: #004d40;
-        }
-
-    </style>
-</head>
-<body>
-
-    <!-- Main Content -->
-    <div class="content">
-
-        <!-- Manage Expenses Section -->
-        <div class="section">
-            <h2 class="section-title">Manage Expenses</h2>
-            <div id="expenseTable">
-                <div class="table-row">
-                    <input type="text" value="Taxes" class="input-box" readonly>
-                    <input type="number" value="10" class="input-box" style="width: 100%;" readonly>% 
-                    <input type="number" value="500" class="input-box expense-amount">
-                    <i class="delete-btn" onclick="confirmDelete(this)">🗑️</i>
-                </div>
-            </div>
-            <button class="btn add-row-btn" id="addRow">+ Add Expense</button>
-        </div>
-
-    </div>
-
-    <script>
-        let rowCount = 1;
-
-        // Add a new expense row dynamically
-        document.getElementById('addRow').addEventListener('click', () => {
-            rowCount++;
-            const newRow = document.createElement('div');
-            newRow.classList.add('table-row');
-            newRow.innerHTML = `
-                <input type="text" placeholder="Expense Title" class="input-box">
-                <input type="number" placeholder="%" class="input-box">
-                <input type="number" placeholder="Amount" class="input-box expense-amount">
-                <i class="delete-btn" onclick="confirmDelete(this)">🗑️</i>
-            `;
-            document.getElementById('expenseTable').appendChild(newRow);
-        });
-
-        // Confirm delete functionality
-        function confirmDelete(deleteIcon) {
-            if (confirm('Are you sure you want to delete this row?')) {
-                const row = deleteIcon.closest('.table-row');
-                row.remove();
-            }
-        }
-
-    </script>
-
-</body>
 </html>
