@@ -1,176 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Generated Financial Graphs</title>
-
-    <!-- Tailwind CSS for styling -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-
+    <title>Expense Visualization</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         body {
             font-family: 'Lato', sans-serif;
-            background-color: #f4f7fb;
-        }
-
-        .header {
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
             text-align: center;
-            padding: 20px;
-            background-color: #5f72be;
-            color: white;
         }
 
         .content {
             max-width: 1200px;
-            margin: auto;
+            margin: 40px auto;
             padding: 20px;
-        }
-
-        .chart-container {
             background-color: #ffffff;
-            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .chart-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #5f72be;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
             text-align: center;
-            margin-bottom: 15px;
+            position: relative;
         }
 
-        .pdf-btn {
-            background-color: #5f72be;
+        canvas {
+            margin-top: 20px;
+        }
+
+        .btn {
+            background-color: #00796b;
             color: white;
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
             font-weight: 600;
             cursor: pointer;
+            margin-top: 20px;
             transition: background-color 0.3s ease;
-            display: block;
-            margin: 20px auto;
         }
 
-        .pdf-btn:hover {
-            background-color: #4c5db2;
+        .btn:hover {
+            background-color: #004d40;
         }
 
+        /* Top-right buttons container */
+        .top-right-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Edit Graph and Logout buttons */
+        .edit-btn, .logout-btn {
+            background-color: #004d40;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .edit-btn:hover, .logout-btn:hover {
+            background-color: #002f29;
+        }
     </style>
 </head>
+
 <body>
 
-    <header class="header">
-        <h1 class="text-3xl font-bold">Your Generated Financial Graphs</h1>
-        <p class="text-white mt-4">A professional view of your financial data over the year</p>
-    </header>
+    <div class="content">
+        <!-- Top-right buttons: Edit Graph and Logout -->
+        <div class="top-right-buttons">
+            <button class="edit-btn" onclick="location.href='edit.html'">Edit Graph</button>
+            <button class="logout-btn" onclick="location.href='logout.html'">Logout</button>
+        </div>
 
-    <div class="content" id="reportContent">
-
-        <!-- Example of dynamic graphs being created based on user inputs -->
-        <!-- Graphs will be dynamically added here -->
-        
-        <div id="graphs"></div>
-
-        <!-- Download as PDF Button -->
-        <button class="pdf-btn" id="downloadPdf">Download as PDF</button>
+        <h2>Expense Graph with Economy Rate Impact</h2>
+        <!-- Increase the size of the canvas for a larger graph -->
+        <canvas id="expenseChart" width="800" height="400"></canvas>
+        <button class="btn" id="savePdfBtn">Save as PDF</button>
     </div>
 
     <script>
-        // Example financial data (this will be dynamically passed from the previous page)
-        const financialData = [
-            { title: 'Taxes', monthlyData: [500, 520, 480, 530, 540, 510, 550, 560, 580, 600, 590, 610] },
-            { title: 'Shopping Expenses', monthlyData: [200, 220, 250, 240, 230, 260, 270, 280, 290, 300, 310, 320] },
-            // Add more data rows dynamically from user inputs
-        ];
+        const savedData = JSON.parse(window.localStorage.getItem('expenseData'));
 
-        // Function to create and append charts based on the data provided
-        function createGraph(title, data) {
-            const chartId = `chart-${title.replace(/\s+/g, '-').toLowerCase()}`; // Unique ID for each chart
+        const labels = savedData.expenses.map(expense => expense.title);
+        const dataValues = savedData.expenses.map(expense => expense.amount);
 
-            // Create chart container
-            const chartContainer = document.createElement('div');
-            chartContainer.classList.add('chart-container');
-            
-            // Create chart title
-            const chartTitle = document.createElement('h2');
-            chartTitle.classList.add('chart-title');
-            chartTitle.textContent = `${title} Over the Year`;
-            
-            // Create chart canvas
-            const chartCanvas = document.createElement('canvas');
-            chartCanvas.setAttribute('id', chartId);
+        // Hardcoded economy rate impact (simulated values)
+        const economyRateImpact = [1.05, 1.02, 1.03, 1.04, 1.06, 1.03]; // Hypothetical yearly growth rate
 
-            // Append title and canvas to the container
-            chartContainer.appendChild(chartTitle);
-            chartContainer.appendChild(chartCanvas);
+        // Create a dynamic dataset for each expense with different colors
+        const datasets = savedData.expenses.map((expense, index) => {
+            // Simulate economy rate impact on the expense data for each expense
+            const simulatedData = Array(6).fill(0).map((_, i) => expense.amount * economyRateImpact[i]);
 
-            // Append container to the report section
-            document.getElementById('graphs').appendChild(chartContainer);
+            return {
+                label: expense.title,
+                data: simulatedData,
+                borderColor: `hsl(${index * 60}, 70%, 50%)`, // Different colors
+                borderWidth: 2,
+                fill: false,
+                tension: 0.1
+            };
+        });
 
-            // Create the line chart
-            const ctx = document.getElementById(chartId).getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                    datasets: [{
-                        label: `${title} (in USD)`,
-                        data: data,
-                        borderColor: '#5f72be',
-                        backgroundColor: '#5f72be33',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Amount in USD ($)'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Month'
-                            }
+        // Graph context
+        const ctx = document.getElementById('expenseChart').getContext('2d');
+
+        // Create the line chart
+        const expenseChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['2019', '2020', '2021', '2022', '2023', '2024'], // Last 5 years + current year
+                datasets: datasets
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Expense Amount ($)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Year'
                         }
                     }
                 }
-            });
-        }
-
-        // Dynamically create a graph for each financial data row
-        financialData.forEach(item => {
-            createGraph(item.title, item.monthlyData);
+            }
         });
 
-        // PDF Download functionality
-        document.getElementById('downloadPdf').addEventListener('click', () => {
-            const element = document.getElementById('reportContent');
-            const opt = {
-                margin:       0.5,
-                filename:     'financial-report.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
-            html2pdf().from(element).set(opt).save();
+        // Function to Save the Chart as PDF
+        document.getElementById('savePdfBtn').addEventListener('click', function () {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('landscape'); // Create a PDF instance
+
+            // Add a title to the PDF
+            pdf.setFontSize(18);
+            pdf.text('Expense Visualization Report', 10, 10);
+
+            // Convert the chart to an image and add it to the PDF
+            pdf.addImage(expenseChart.toBase64Image(), 'JPEG', 10, 20, 280, 150);
+
+            // Save the PDF file
+            pdf.save('expense_report.pdf');
         });
     </script>
 
 </body>
+
 </html>
