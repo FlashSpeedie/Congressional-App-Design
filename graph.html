@@ -84,7 +84,7 @@
         <!-- Top-right buttons: Edit Graph and Logout -->
         <div class="top-right-buttons">
             <button class="edit-btn" onclick="location.href='edit.html'">Edit Graph</button>
-            <button class="logout-btn" onclick="location.href='logout.html'">Logout</button>
+            <button class="logout-btn" onclick="location.href='login.html'">Logout</button>
         </div>
 
         <h2>Expense Graph with Economy Rate Impact</h2>
@@ -93,75 +93,7 @@
         <button class="btn" id="savePdfBtn">Save as PDF</button>
     </div>
 
-    <script>
-        const savedData = JSON.parse(window.localStorage.getItem('expenseData'));
-
-        const labels = savedData.expenses.map(expense => expense.title);
-        const dataValues = savedData.expenses.map(expense => expense.amount);
-
-        // Hardcoded economy rate impact (simulated values)
-        const economyRateImpact = [1.05, 1.02, 1.03, 1.04, 1.06, 1.03]; // Hypothetical yearly growth rate
-
-        // Create a dynamic dataset for each expense with different colors
-        const datasets = savedData.expenses.map((expense, index) => {
-            // Simulate economy rate impact on the expense data for each expense
-            const simulatedData = Array(6).fill(0).map((_, i) => expense.amount * economyRateImpact[i]);
-
-            return {
-                label: expense.title,
-                data: simulatedData,
-                borderColor: `hsl(${index * 60}, 70%, 50%)`, // Different colors
-                borderWidth: 2,
-                fill: false,
-                tension: 0.1
-            };
-        });
-
-        // Graph context
-        const ctx = document.getElementById('expenseChart').getContext('2d');
-
-        // Create the line chart
-        const expenseChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['2019', '2020', '2021', '2022', '2023', '2024'], // Last 5 years + current year
-                datasets: datasets
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Expense Amount ($)'
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Year'
-                        }
-                    }
-                }
-            }
-        });
-
-        // Function to Save the Chart as PDF
-        document.getElementById('savePdfBtn').addEventListener('click', function () {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('landscape'); // Create a PDF instance
-
-            // Add a title to the PDF
-            pdf.setFontSize(18);
-            pdf.text('Expense Visualization Report', 10, 10);
-
-            // Convert the chart to an image and add it to the PDF
-            pdf.addImage(expenseChart.toBase64Image(), 'JPEG', 10, 20, 280, 150);
-
-            // Save the PDF file
-            pdf.save('expense_report.pdf');
-        });
-    </script>
+    <script src="javaScriptFiles/displayGraphData.js"></script>
 
 </body>
 

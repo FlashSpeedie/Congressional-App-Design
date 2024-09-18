@@ -156,22 +156,9 @@
     </main>
 
     <div class="max-w-lg mx-auto text-center mt-12 mb-6">
-        <p class="text-white">Already have an account? <a href="index.html" class="font-bold hover:underline">Sign In</a>.</p>
+        <p class="text-white">Already have an account? <a href="login.html" class="font-bold hover:underline">Sign In</a>.</p>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const googleSignUpButton = document.querySelector('.social-btn:first-child');
-            const appleSignUpButton = document.querySelector('.social-btn:last-child');
-
-            googleSignUpButton.addEventListener('click', function () {
-                window.location.href = 'https://accounts.google.com/signin';
-            });
-
-            appleSignUpButton.addEventListener('click', function () {
-                window.location.href = 'https://appleid.apple.com/auth/signin';
-            });
-        });
-    </script>
+    <script src="javaScriptFiles/registerLogic.js"></script>
 </body>
 </html>
