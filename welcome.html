@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Welcome to Your Yearly Expense Tracker</title>
+
+    <!-- Google Fonts and Tailwind CSS for styling -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            animation: fadeIn 1.5s ease-in-out;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #00796b;
+            margin-bottom: 20px;
+            animation: popIn 1s ease-in-out forwards;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        @keyframes popIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .typing-animation {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #00796b;
+            white-space: nowrap;
+            overflow: hidden;
+            border-right: 3px solid #00796b;
+            width: 0;
+            animation: typing 4s steps(30, end), blink 0.75s step-end infinite;
+            margin: 20px 0;
+        }
+
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+
+        @keyframes blink {
+            50% {
+                border-color: transparent;
+            }
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .login-btn {
+            background-color: #00796b;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background-color: #004d40;
+            transform: translateY(-2px);
+        }
+
+        .quote {
+            font-size: 1.2rem;
+            font-family: 'Montserrat', sans-serif;
+            color: #555;
+            margin-top: 30px;
+            position: relative;
+            animation: fadeInQuote 1.5s ease-in-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeInQuote {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #777;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Welcome to Your Yearly Expense Tracker!</h1>
+        <div class="typing-animation">Save More, Spend Less, Live Better!</div>
+        <p>Track your expenses easily and manage your finances effectively.</p>
+        <button class="login-btn" onclick="window.location.href='login.html'">Login</button>
+        <div class="quote">“Saving is a great habit, but without investing and tracking, it just sleeps.”</div>
+    </div>
+
+    <div class="footer">
+        &copy; 2024 Yearly Expense Tracker. All rights reserved.
+    </div>
+
+    <script>
+        // Additional typing animation for dynamic quotes
+        const quotes = [
+            "A penny saved is a penny earned.",
+            "Do not save what is left after spending, but spend what is left after saving.",
+            "It's not how much money you make, but how much you keep.",
+            "The best time to start saving was yesterday. The second best time is now."
+        ];
+
+        let quoteIndex = 0;
+
+        function changeQuote() {
+            const quoteElement = document.querySelector('.quote');
+            quoteElement.textContent = quotes[quoteIndex];
+            quoteElement.style.opacity = '0';
+            setTimeout(() => {
+                quoteElement.style.opacity = '1';
+                quoteIndex = (quoteIndex + 1) % quotes.length;
+            }, 300);
+        }
+
+        setInterval(changeQuote, 4000);
+    </script>
+
+</body>
+
+</html>
