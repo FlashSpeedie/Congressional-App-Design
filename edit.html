@@ -183,6 +183,16 @@
 
 <body>
 
+    <!-- Check if user is logged in -->
+    <script>
+        // Assuming you store the user's email in local storage upon login
+        const userEmail = window.localStorage.getItem('userEmail');
+
+        if (!userEmail) {
+            window.location.href = 'login.html'; // Redirect to login if not logged in
+        }
+    </script>
+
     <!-- Header Section -->
     <header class="header">
         <h1>Yearly Expense Tracker - Edit Data</h1>
@@ -199,8 +209,7 @@
                 <label class="input-label" for="annualSalary">Current Salary</label>
                 <div class="input-box">
                     <span class="dollar-sign">$</span>
-                    <input type="text" id="annualSalary" name="annualSalary" placeholder="Enter your annual salary"
-                        value="80,000" required>
+                    <input type="text" id="annualSalary" name="annualSalary" placeholder="Enter your annual salary" value="80,000" required>
                 </div>
             </div>
         </div>
@@ -270,43 +279,32 @@
 
         // Submit and Save Data as JSON
         document.getElementById('submitBtn').addEventListener('click', () => {
-            const rows = document.querySelectorAll('.table-row');
-            const expenses = [];
+            const annualSalary = document.getElementById('annualSalary').value;
+            const expenses = [...document.querySelectorAll('.table-row')].map(row => ({
+                title: row.querySelector('.expense-title').value,
+                percentage: row.querySelector('.expense-percentage').value,
+                amount: row.querySelector('.expense-amount').value,
+            }));
 
-            rows.forEach((row) => {
-                const title = row.querySelector('.expense-title').value;
-                const percentage = row.querySelector('.expense-percentage').value;
-                const amount = row.querySelector('.expense-amount').value;
-
-                if (title && percentage && amount) {
-                    expenses.push({
-                        title: title,
-                        percentage: percentage,
-                        amount: amount
-                    });
-                }
-            });
-
-            const data = {
-                salary: document.getElementById('annualSalary').value,
+            const userData = {
+                email: userEmail,
+                salary: annualSalary,
                 expenses: expenses
             };
 
-            console.log('Saved Data:', JSON.stringify(data));
-            window.localStorage.setItem('expenseData', JSON.stringify(data));
+            const dataStr = JSON.stringify(userData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${userEmail}.json`; // Filename based on user email
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
             alert('Data saved successfully!');
         });
-
-        // Format numbers with commas
-        document.getElementById('annualSalary').addEventListener('input', function () {
-            this.value = formatNumberWithCommas(this.value.replace(/,/g, ''));
-        });
-
-        function formatNumberWithCommas(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
     </script>
-
 </body>
 
 </html>
