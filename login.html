@@ -85,6 +85,23 @@
             width: 20px;
             height: 20px;
         }
+
+        .register-link {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #5f72be;
+        }
+
+        .register-link a {
+            color: #5f72be;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        .register-link a:hover {
+            color: #4c5db2;
+        }
     </style>
 </head>
 <body>
@@ -103,6 +120,11 @@
             <button type="submit" class="login-btn">Login</button>
         </form>
 
+        <!-- Register link -->
+        <div class="register-link">
+            Not have an Account? <a href="register.html">Register here</a>
+        </div>
+
         <!-- Google and Apple Login Buttons -->
         <div class="social-btn" onclick="googleLogin()">
             <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google" class="icon">
@@ -113,8 +135,25 @@
             Login with Apple
         </div>
     </div>
-
+    
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const loginForm = document.getElementById('loginForm');
+            const emailInput = document.getElementById('email');
+
+            loginForm.addEventListener('submit', function (event) {
+                // Prevent the default form submission
+                event.preventDefault();
+                
+                // Save the email to localStorage
+                const email = emailInput.value;
+                localStorage.setItem('userEmail', email);
+                
+                // Now submit the form programmatically
+                loginForm.submit(); // Submit the form after saving the email
+            });
+        });
+
         // Simulated Google Login
         function googleLogin() {
             alert('Redirecting to Google Login...');
@@ -126,13 +165,6 @@
             alert('Redirecting to Apple Login...');
             window.location.href = 'https://appleid.apple.com/auth/signin';
         }
-
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            // Here you would validate the user credentials via backend authentication
-            // If successful, redirect to the edit page
-            window.location.href = "edit.html";
-        });
     </script>
 
 </body>

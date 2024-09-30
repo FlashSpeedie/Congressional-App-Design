@@ -11,6 +11,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
 
+    <script src="sqlInteraction.js"></script>
+
     <style>
         body {
             font-family: 'Lato', sans-serif;
@@ -287,22 +289,14 @@
             }));
 
             const userData = {
-                email: userEmail,
+                email: window.localStorage.getItem('userEmail'),
                 salary: annualSalary,
                 expenses: expenses
             };
 
             const dataStr = JSON.stringify(userData, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${userEmail}.json`; // Filename based on user email
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            alert('Data saved successfully!');
+
+            postData(window.localStorage.getItem('userEmail'), dataStr);
         });
     </script>
 </body>

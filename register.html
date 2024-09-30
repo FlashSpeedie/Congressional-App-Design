@@ -86,7 +86,6 @@
                 padding: 0.75rem 1rem;
             }
         }
-
     </style>
 </head>
 <body class="body-bg min-h-screen pt-12 md:pt-20 pb-6 px-2 md:px-0">
@@ -103,7 +102,7 @@
         </section>
 
         <section class="mt-10">
-            <form class="flex flex-col" method="POST" action="register.php">
+            <form id="registrationForm" class="flex flex-col" method="POST" action="register.php">
                 <!-- Full Name -->
                 <div class="mb-6 pt-3 rounded bg-gray-200">
                     <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="fullName">Full Name</label>
@@ -143,11 +142,11 @@
         <section class="my-6 text-center">
             <span class="text-gray-500">or sign up with</span>
             <div class="mt-4">
-                <button class="social-btn w-full mb-3" type="button">
+                <button class="social-btn w-full mb-3" type="button" id="googleSignUp">
                     <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google" class="icon">
                     Sign up with Google
                 </button>
-                <button class="social-btn w-full" type="button">
+                <button class="social-btn w-full" type="button" id="appleSignUp">
                     <img src="https://img.icons8.com/ios-filled/50/000000/mac-os.png" alt="Apple" class="icon">
                     Sign up with Apple
                 </button>
@@ -161,8 +160,23 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const googleSignUpButton = document.querySelector('.social-btn:first-child');
-            const appleSignUpButton = document.querySelector('.social-btn:last-child');
+            const registrationForm = document.getElementById('registrationForm');
+            const emailInput = document.getElementById('email');
+
+            registrationForm.addEventListener('submit', function (event) {
+                // Prevent the default form submission
+                event.preventDefault(); // Stop the form from submitting immediately
+                
+                // Save the email to localStorage
+                const email = emailInput.value;
+                localStorage.setItem('userEmail', email);
+                
+                // Now submit the form programmatically
+                registrationForm.submit(); // Submit the form after saving the email
+            });
+
+            const googleSignUpButton = document.getElementById('googleSignUp');
+            const appleSignUpButton = document.getElementById('appleSignUp');
 
             googleSignUpButton.addEventListener('click', function () {
                 window.location.href = 'https://accounts.google.com/signin';

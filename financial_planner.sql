@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 11, 2024 at 04:36 AM
+-- Generation Time: Sep 27, 2024 at 04:50 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -33,15 +33,16 @@ CREATE TABLE `users` (
   `email` varchar(50) NOT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `password` varchar(255) NOT NULL,
-  `reg_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `reg_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `jsonFile` mediumtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `fullName`, `email`, `phone`, `password`, `reg_date`) VALUES
-(1, 'Siddharth Pandit ', 'siddharth20pandit@gmail.com', '', '$2y$10$0OfBV6gvlyMMUgFt4MH0a.RytOXMt7tJN3nz.k4rv1nheLFeQVF8i', '2024-09-05 22:52:46');
+INSERT INTO `users` (`id`, `fullName`, `email`, `phone`, `password`, `reg_date`, `jsonFile`) VALUES
+(1, 'Siddharth Pandit ', 'siddharth20pandit@gmail.com', '', '$2y$10$0OfBV6gvlyMMUgFt4MH0a.RytOXMt7tJN3nz.k4rv1nheLFeQVF8i', '2024-09-05 22:52:46', '');
 
 --
 -- Indexes for dumped tables
@@ -62,7 +63,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(6) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(6) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

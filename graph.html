@@ -8,6 +8,7 @@
     <title>Expense Visualization</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="sqlInteraction.js"></script>
     <style>
         body {
             font-family: 'Lato', sans-serif;
@@ -84,7 +85,7 @@
         <!-- Top-right buttons: Edit Graph and Logout -->
         <div class="top-right-buttons">
             <button class="edit-btn" onclick="location.href='edit.html'">Edit Graph</button>
-            <button class="logout-btn" onclick="location.href='logout.html'">Logout</button>
+            <button class="logout-btn" onclick="location.href='index.html'">Logout</button>
         </div>
 
         <h2>Expense Graph with Economy Rate Impact</h2>
@@ -94,6 +95,8 @@
     </div>
 
     <script>
+        const email = window.localStorage.getItem('userEmail');
+        fetchData(email);
         const savedData = JSON.parse(window.localStorage.getItem('expenseData'));
 
         const labels = savedData.expenses.map(expense => expense.title);
