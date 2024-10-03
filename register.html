@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Register - Financial Planner</title>
+    <title>Login/Register - Financial Planner</title>
 
     <!-- Tailwind CSS for styling -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
@@ -13,165 +13,153 @@
     <style>
         body {
             font-family: 'Lato', sans-serif;
+            background-color: #f4f7fb;
         }
-        
-        .body-bg {
-            background-color: #9921e8;
-            background-image: linear-gradient(315deg, #9921e8 0%, #5f72be 74%);
+
+        .form-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
-        
-        /* Password Strength Bar */
-        .password-strength-bar {
-            background-color: #e0e0e0;
-            height: 10px;
+
+        .form-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #5f72be;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .input-box {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
             border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            background-color: #5f72be;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
             width: 100%;
         }
-        
-        #password-strength-indicator {
-            height: 10px;
-            border-radius: 5px;
-            transition: width 0.3s ease;
+
+        .btn:hover {
+            background-color: #4c5db2;
         }
 
-        /* Social buttons */
-        .social-btn {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.75rem;
+        .register-link,
+        .login-link {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #5f72be;
+        }
+
+        .register-link a,
+        .login-link a {
+            color: #5f72be;
+            text-decoration: underline;
             font-weight: 600;
-            background-color: #ffffff;
-            border-radius: 0.375rem;
-            border: 1px solid #e0e0e0;
-            padding: 0.75rem 1rem;
-            transition: background-color 0.2s ease-in-out;
         }
 
-        .social-btn:hover {
-            background-color: #f0f0f0;
+        .register-link a:hover,
+        .login-link a:hover {
+            color: #4c5db2;
         }
 
-        .icon {
-            width: 20px;
-            height: 20px;
+        /* Sliding animation for forms */
+        .slide {
+            transition: transform 0.5s ease;
         }
 
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            .max-w-lg {
-                width: 90%;
-                margin: auto;
-            }
-        
-            .text-4xl {
-                font-size: 2.5rem;
-            }
-        
-            .rounded-lg {
-                border-radius: 0.5rem;
-            }
-
-            .social-btn {
-                padding: 0.5rem 0.75rem;
-            }
+        .form-hidden {
+            display: none;
         }
-        
-        @media (min-width: 768px) {
-            .rounded-lg {
-                border-radius: 1rem;
-            }
-        
-            .social-btn {
-                padding: 0.75rem 1rem;
-            }
-        }
-
     </style>
 </head>
-<body class="body-bg min-h-screen pt-12 md:pt-20 pb-6 px-2 md:px-0">
-    <header class="max-w-lg mx-auto">
-        <a href="#">
-            <h1 class="text-4xl font-bold text-white text-center">Create Your Account</h1>
-        </a>
-    </header>
+<body>
 
-    <main class="bg-white max-w-lg mx-auto p-8 md:p-12 my-10 rounded-lg shadow-2xl">
-        <section>
-            <h3 class="font-bold text-2xl">Register Here</h3>
-            <p class="text-gray-600 pt-2">Fill in your details to create an account.</p>
-        </section>
-
-        <section class="mt-10">
-            <form class="flex flex-col" method="POST" action="register.php">
-                <!-- Full Name -->
-                <div class="mb-6 pt-3 rounded bg-gray-200">
-                    <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="fullName">Full Name</label>
-                    <input type="text" id="fullName" name="fullName" class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-purple-600 transition duration-500 px-3 pb-3" required>
+    <!-- Form container -->
+    <div class="form-container">
+        <!-- Login Form -->
+        <div id="loginForm" class="slide">
+            <h1 class="form-title">Login to Your Account</h1>
+            <form method="POST" action="edit.html">
+                <div class="input-field">
+                    <label class="input-label" for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" class="input-box" required>
                 </div>
-                
-                <!-- Email -->
-                <div class="mb-6 pt-3 rounded bg-gray-200">
-                    <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="email">Email</label>
-                    <input type="email" id="email" name="email" class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-purple-600 transition duration-500 px-3 pb-3" required>
+                <div class="input-field">
+                    <label class="input-label" for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" class="input-box" required>
                 </div>
-
-                <!-- Phone Number (Optional) -->
-                <div class="mb-6 pt-3 rounded bg-gray-200">
-                    <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="phone">Phone Number (Optional)</label>
-                    <input type="tel" id="phone" name="phone" class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-purple-600 transition duration-500 px-3 pb-3">
-                </div>
-
-                <!-- Password -->
-                <div class="mb-6 pt-3 rounded bg-gray-200">
-                    <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="password">Password</label>
-                    <input type="password" id="password" name="password" class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-purple-600 transition duration-500 px-3 pb-3" required>
-                </div>
-
-                <!-- Confirm Password -->
-                <div class="mb-6 pt-3 rounded bg-gray-200">
-                    <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-purple-600 transition duration-500 px-3 pb-3" required>
-                </div>
-
-                <!-- Submit Button -->
-                <button class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded shadow-lg hover:shadow-xl transition duration-200" type="submit">Create Account</button>
+                <button type="submit" class="btn">Login</button>
             </form>
-        </section>
-
-        <!-- Social sign up buttons -->
-        <section class="my-6 text-center">
-            <span class="text-gray-500">or sign up with</span>
-            <div class="mt-4">
-                <button class="social-btn w-full mb-3" type="button">
-                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google" class="icon">
-                    Sign up with Google
-                </button>
-                <button class="social-btn w-full" type="button">
-                    <img src="https://img.icons8.com/ios-filled/50/000000/mac-os.png" alt="Apple" class="icon">
-                    Sign up with Apple
-                </button>
+            <div class="register-link">
+                Don't have an account? <a href="#" onclick="showRegister()">Register here</a>
             </div>
-        </section>
-    </main>
+        </div>
 
-    <div class="max-w-lg mx-auto text-center mt-12 mb-6">
-        <p class="text-white">Already have an account? <a href="index.html" class="font-bold hover:underline">Sign In</a>.</p>
+        <!-- Register Form (Initially hidden) -->
+        <div id="registerForm" class="form-hidden">
+            <h1 class="form-title">Create Your Account</h1>
+            <form method="POST" action="register.html">
+                <div class="input-field">
+                    <label class="input-label" for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" class="input-box" required>
+                </div>
+                <div class="input-field">
+                    <label class="input-label" for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" name="email" class="input-box" required>
+                </div>
+                <div class="input-field">
+                    <label class="input-label" for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" name="password" class="input-box" required>
+                </div>
+                <div class="input-field">
+                    <label class="input-label" for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="input-box" required>
+                </div>
+                <button type="submit" class="btn">Register</button>
+            </form>
+            <div class="login-link">
+                Already have an account? <a href="#" onclick="showLogin()">Login here</a>
+            </div>
+        </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const googleSignUpButton = document.querySelector('.social-btn:first-child');
-            const appleSignUpButton = document.querySelector('.social-btn:last-child');
+        function showRegister() {
+            // Slide the login form out and show the register form
+            document.getElementById('loginForm').classList.add('form-hidden');
+            document.getElementById('registerForm').classList.remove('form-hidden');
+        }
 
-            googleSignUpButton.addEventListener('click', function () {
-                window.location.href = 'https://accounts.google.com/signin';
-            });
-
-            appleSignUpButton.addEventListener('click', function () {
-                window.location.href = 'https://appleid.apple.com/auth/signin';
-            });
-        });
+        function showLogin() {
+            // Slide the register form out and show the login form
+            document.getElementById('registerForm').classList.add('form-hidden');
+            document.getElementById('loginForm').classList.remove('form-hidden');
+        }
     </script>
 </body>
 </html>
