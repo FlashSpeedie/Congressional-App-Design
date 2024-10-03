@@ -198,7 +198,7 @@
     <!-- Header Section -->
     <header class="header">
         <h1>Yearly Expense Tracker - Edit Data</h1>
-        <a href="index.html"><button class="logout-btn">Logout</button></a>
+        <a href="login.html"><button class="logout-btn">Logout</button></a>
     </header>
 
     <!-- Main Content -->
@@ -220,7 +220,7 @@
         <div class="section">
             <h2 class="section-title">Manage Expenses</h2>
             <div id="expenseTable">
-                <div class="table-row">
+                <!-- <div class="table-row">
                     <input type="text" value="Taxes" class="input-box expense-title">
                     <div class="input-box" style="position: relative;">
                         <input type="number" value="10" class="input-box expense-percentage">
@@ -231,7 +231,7 @@
                         <input type="number" value="500" class="input-box expense-amount">
                     </div>
                     <i class="delete-btn" onclick="confirmDelete(this)">🗑️</i>
-                </div>
+                </div> -->
             </div>
             <button class="btn add-row-btn" id="addRow">+ Add Expense</button>
         </div>
@@ -249,27 +249,48 @@
     </footer>
 
     <script>
+        const email = window.localStorage.getItem('userEmail');
+        fetchData(email).then((savedData) => {
+            const useableData = JSON.parse(savedData);
+            if (!useableData || !useableData.expenses) {
+                alert('No expense data found');
+                return;
+            }
+
+            // Map the expense titles and amounts from the fetched data
+            const labels = useableData.expenses.map(expense => expense.title);
+            const dataValues = useableData.expenses.map(expense => expense.amount);
+
+            for (var i = 0; i < labels.length; i++){
+                addRow(labels[i], dataValues[i]);
+            }
+        });
+
         let rowCount = 1;
 
         // Add a new expense row dynamically
         document.getElementById('addRow').addEventListener('click', () => {
+            addRow('','');
+        });
+
+        function addRow(name, amount) {
             rowCount++;
             const newRow = document.createElement('div');
             newRow.classList.add('table-row');
             newRow.innerHTML = `
-                <input type="text" placeholder="Expense Title" class="input-box expense-title">
+                <input type="text" value="${name}" placeholder="Expense Title" class="input-box expense-title">
                 <div class="input-box" style="position: relative;">
                     <input type="number" placeholder="%" class="input-box expense-percentage">
                     <span class="percent-sign">%</span>
                 </div>
                 <div class="input-box">
                     <span class="dollar-sign">$</span>
-                    <input type="number" placeholder="Amount" class="input-box expense-amount">
+                    <input type="number" value="${amount}" placeholder="Amount" class="input-box expense-amount">
                 </div>
                 <i class="delete-btn" onclick="confirmDelete(this)">🗑️</i>
             `;
             document.getElementById('expenseTable').appendChild(newRow);
-        });
+        }
 
         // Confirm delete functionality
         function confirmDelete(deleteIcon) {
@@ -296,6 +317,7 @@
 
             const dataStr = JSON.stringify(userData, null, 2);
 
+            window.location.href = 'graph.html';
             postData(window.localStorage.getItem('userEmail'), dataStr);
         });
     </script>

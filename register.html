@@ -9,6 +9,7 @@
     <!-- Tailwind CSS for styling -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <script src='sqlInteraction.js'></script>
 
     <style>
         body {
@@ -155,7 +156,7 @@
     </main>
 
     <div class="max-w-lg mx-auto text-center mt-12 mb-6">
-        <p class="text-white">Already have an account? <a href="index.html" class="font-bold hover:underline">Sign In</a>.</p>
+        <p class="text-white">Already have an account? <a href="login.html" class="font-bold hover:underline">Sign In</a>.</p>
     </div>
 
     <script>
@@ -171,8 +172,9 @@
                 const email = emailInput.value;
                 localStorage.setItem('userEmail', email);
                 
-                // Now submit the form programmatically
-                registrationForm.submit(); // Submit the form after saving the email
+                window.location.href = 'graph.html';
+                
+                registrationForm.submit();
             });
 
             const googleSignUpButton = document.getElementById('googleSignUp');

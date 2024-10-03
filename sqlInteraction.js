@@ -1,10 +1,10 @@
 /**
- * email to fetch the json string from
- * @param {String} email 
+ * Fetches the JSON string for the provided email and returns a promise.
+ * @param {String} email - The email to fetch the json string from.
+ * @returns {Promise} - A promise that resolves to the fetched data or an error.
  */
 function fetchData(email) {
-    
-    fetch('getJSON.php', {
+    return fetch('getJSON.php', {
         method: 'POST',
         body: JSON.stringify({
             email: email
@@ -18,14 +18,14 @@ function fetchData(email) {
     })
     .then(data => {
         if (data.error) {
-            alert('ahhh');
+            throw new Error('Error: ' + data.message);
         } else {
-            window.localStorage.setItem('expenseData',data.jsonFile);
+            return data.jsonFile; // Return the jsonFile data
         }
     })
     .catch(error => {
-        alert('There has been a problem with your fetch operation:'+ error);
-        document.getElementById('output').textContent = 'Error fetching data.';
+        console.error('Fetch operation failed:', error);
+        throw error; // Propagate the error to be handled by the caller
     });
 }
 
@@ -51,7 +51,6 @@ function postData(email, data){
     })
     .then(data => {
         alert('Data saved successfully!');
-        window.location.href = 'graph.html';
     })
     .catch(error => {
         console.error('There was a problem with the fetch operation:', error);
