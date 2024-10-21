@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Edit Financial Data - Yearly Expense Tracker</title>
+    <title>Expense Tracker</title>
 
     <!-- Tailwind CSS for styling -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
@@ -14,112 +14,88 @@
     <style>
         body {
             font-family: 'Lato', sans-serif;
-            background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            background-color: #f4f7fb;
+            margin: 0;
+            padding: 0;
         }
 
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
             background-color: #00796b;
             color: white;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 1rem;
         }
 
         .header h1 {
-            font-size: 1.8rem;
-        }
-
-        .logout-btn {
-            background-color: white;
-            color: #00796b;
-            padding: 8px 15px;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .logout-btn:hover {
-            background-color: #004d40;
-            color: white;
+            margin: 0;
+            font-size: 2.5rem;
         }
 
         .content {
-            max-width: 900px;
+            max-width: 1100px;
             margin: 40px auto;
             padding: 20px;
-            background-color: #ffffff;
+            background-color: white;
             border-radius: 10px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .section {
-            background-color: #ffffff;
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 30px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
+        .section {
+            margin-bottom: 30px;
+        }
+
         .section-title {
-            font-size: 1.6rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #00796b;
-            text-align: center;
-        }
-
-        .input-field {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .input-label {
+            font-size: 1.8rem;
             font-weight: 700;
-            margin-right: 15px;
-            flex-basis: 30%;
+            color: #00796b;
+            margin-bottom: 15px;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 2fr 1fr 1fr auto;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .table-row input,
+        .table-row select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
 
         .input-box {
-            flex-basis: 70%;
+            display: flex;
+            align-items: center;
             position: relative;
-        }
-
-        .input-box input {
-            width: 100%;
-            padding: 10px;
-            padding-left: 25px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .input-box input:focus {
-            border-color: #00796b;
-        }
-
-        .dollar-sign {
-            position: absolute;
-            top: 50%;
-            left: 5px;
-            transform: translateY(-50%);
-            color: #00796b;
         }
 
         .percent-sign {
             position: absolute;
+            right: 15px;
             top: 50%;
-            right: 5px;
             transform: translateY(-50%);
             color: #00796b;
+        }
+
+        .input-box input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            background-color: #ddd;
+            height: 6px;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .input-box input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #00796b;
         }
 
         .btn {
@@ -128,44 +104,22 @@
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
-            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-top: 20px;
+            font-weight: 600;
         }
 
         .btn:hover {
             background-color: #004d40;
         }
 
-        .table-row {
-            display: grid;
-            grid-template-columns: 1fr 0.5fr 1.5fr auto;
-            align-items: center;
-            margin-bottom: 10px;
-            gap: 10px;
-        }
-
-        .table-row input {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            width: 100%;
-            position: relative;
-        }
-
-        .table-row input:focus {
-            border-color: #00796b;
-        }
-
         .delete-btn {
             color: red;
+            font-size: 1.5rem;
             cursor: pointer;
         }
 
-        .add-row-btn {
-            margin-top: 15px;
-            background-color: #00796b;
+        .dollar-sign {
+            margin-right: 5px;
         }
 
         .footer {
@@ -173,138 +127,127 @@
             padding: 20px;
             background-color: #00796b;
             color: white;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 
 <body>
 
-    <!-- Check if user is logged in -->
-    <script>
-        // Assuming you store the user's email in local storage upon login
-        const userEmail = window.localStorage.getItem('userEmail');
+    <div class="header">
+        <h1>Expense Tracker</h1>
+    </div>
 
-        if (!userEmail) {
-            window.location.href = 'login.html'; // Redirect to login if not logged in
-        }
-    </script>
-
-    <!-- Header Section -->
-    <header class="header">
-        <h1>Yearly Expense Tracker - Edit Data</h1>
-        <a href="index.html"><button class="logout-btn">Logout</button></a>
-    </header>
-
-    <!-- Main Content -->
     <div class="content">
 
-        <!-- Annual Salary Section -->
+        <!-- Manage Daily & Average Expenses Section -->
         <div class="section">
-            <h2 class="section-title">Annual Salary</h2>
-            <div class="input-field">
-                <label class="input-label" for="annualSalary">Current Salary</label>
-                <div class="input-box">
-                    <span class="dollar-sign">$</span>
-                    <input type="text" id="annualSalary" name="annualSalary" placeholder="Enter your annual salary" value="80,000" required>
-                </div>
-            </div>
-        </div>
+            <h2 class="section-title">Manage Daily & Average Expenses</h2>
 
-        <!-- Manage Expenses Section -->
-        <div class="section">
-            <h2 class="section-title">Manage Expenses</h2>
-            <div id="expenseTable">
-                <div class="table-row">
-                    <input type="text" value="Taxes" class="input-box expense-title">
-                    <div class="input-box" style="position: relative;">
-                        <input type="number" value="10" class="input-box expense-percentage">
-                        <span class="percent-sign">%</span>
-                    </div>
-                    <div class="input-box">
-                        <span class="dollar-sign">$</span>
-                        <input type="number" value="500" class="input-box expense-amount">
-                    </div>
-                    <i class="delete-btn" onclick="confirmDelete(this)">🗑️</i>
-                </div>
-            </div>
-            <button class="btn add-row-btn" id="addRow">+ Add Expense</button>
+            <div id="expenseTable"></div>
+
+            <button class="btn" id="addRow">+ Add Expense</button>
         </div>
 
         <!-- Submit Button -->
         <div class="section" style="text-align: center;">
-            <button class="btn" id="submitBtn" style="width: 100%; padding: 15px 20px; font-size: 1.2rem;">Submit & Save</button>
+            <button class="btn" id="submitBtn">Submit & Save</button>
         </div>
-
     </div>
 
-    <!-- Footer -->
     <footer class="footer">
-        Yearly Expense Tracker &copy; 2024
+        Financial Planner &copy; 2024
     </footer>
 
     <script>
-        let rowCount = 1;
+        let rowCount = 0;
 
-        // Add a new expense row dynamically
-        document.getElementById('addRow').addEventListener('click', () => {
+        // Function to add a new expense row
+        function addExpenseRow(expense = { name: '', percentage: 0, amount: '', date: '', influence: 'positive' }) {
             rowCount++;
             const newRow = document.createElement('div');
             newRow.classList.add('table-row');
             newRow.innerHTML = `
-                <input type="text" placeholder="Expense Title" class="input-box expense-title">
-                <div class="input-box" style="position: relative;">
-                    <input type="number" placeholder="%" class="input-box expense-percentage">
-                    <span class="percent-sign">%</span>
-                </div>
+                <input type="text" value="${expense.name}" placeholder="Expense Name" class="expense-name">
                 <div class="input-box">
-                    <span class="dollar-sign">$</span>
-                    <input type="number" placeholder="Amount" class="input-box expense-amount">
+                    <input type="range" min="0" max="100" value="${expense.percentage}" class="expense-slider" id="slider${rowCount}">
+                    <span class="percent-sign">${expense.percentage}%</span>
                 </div>
+                <input type="number" value="${expense.amount}" placeholder="Amount" class="expense-amount">
+                <input type="date" value="${expense.date}" class="expense-date">
+                <select class="expense-influence">
+                    <option value="positive" ${expense.influence === 'positive' ? 'selected' : ''}>Positive</option>
+                    <option value="negative" ${expense.influence === 'negative' ? 'selected' : ''}>Negative</option>
+                </select>
                 <i class="delete-btn" onclick="confirmDelete(this)">🗑️</i>
             `;
             document.getElementById('expenseTable').appendChild(newRow);
+
+            // Initialize slider interaction
+            const slider = document.getElementById(`slider${rowCount}`);
+            slider.oninput = function () {
+                this.nextElementSibling.innerText = `${this.value}%`;
+            };
+        }
+
+        // Load data from localStorage when the page loads
+        window.onload = function () {
+            const savedData = localStorage.getItem('expenseData');
+            if (savedData) {
+                const expenseData = JSON.parse(savedData);
+                expenseData.expenses.forEach(expense => {
+                    addExpenseRow(expense);
+                });
+            } else {
+                addExpenseRow();  // Add an empty row if no data exists
+            }
+        };
+
+        // Add new expense row dynamically
+        document.getElementById('addRow').addEventListener('click', () => {
+            addExpenseRow();  // Add empty row on click
         });
 
         // Confirm delete functionality
         function confirmDelete(deleteIcon) {
             if (confirm('Are you sure you want to delete this row?')) {
-                const row = deleteIcon.closest('.table-row');
-                row.remove();
+                deleteIcon.closest('.table-row').remove();
             }
         }
 
-        // Submit and Save Data as JSON
+        // Save Data to localStorage
         document.getElementById('submitBtn').addEventListener('click', () => {
-            const annualSalary = document.getElementById('annualSalary').value;
-            const expenses = [...document.querySelectorAll('.table-row')].map(row => ({
-                title: row.querySelector('.expense-title').value,
-                percentage: row.querySelector('.expense-percentage').value,
-                amount: row.querySelector('.expense-amount').value,
-            }));
+            const rows = document.querySelectorAll('.table-row');
+            const expenses = [];
 
-            const userData = {
-                email: userEmail,
-                salary: annualSalary,
-                expenses: expenses
+            rows.forEach((row) => {
+                const name = row.querySelector('.expense-name').value;
+                const percentage = row.querySelector('.expense-slider').value;
+                const amount = row.querySelector('.expense-amount').value;
+                const date = row.querySelector('.expense-date').value;
+                const influence = row.querySelector('.expense-influence').value;
+
+                if (name && percentage && amount) {
+                    expenses.push({
+                        name,
+                        percentage,
+                        amount,
+                        date,
+                        influence
+                    });
+                }
+            });
+
+            const data = {
+                timestamp: new Date().toISOString(),
+                expenses
             };
 
-            const dataStr = JSON.stringify(userData, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${userEmail}.json`; // Filename based on user email
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            alert('Data saved successfully!');
+            // Save the data to localStorage
+            localStorage.setItem('expenseData', JSON.stringify(data));
+            alert('Data saved successfully to local storage!');
         });
     </script>
+
 </body>
 
 </html>
