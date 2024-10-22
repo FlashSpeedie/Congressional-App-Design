@@ -8,6 +8,7 @@
     <title>Expense Visualization</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="sqlInteraction.js"></script>
     <style>
         body {
             font-family: 'Lato', sans-serif;
@@ -79,38 +80,55 @@
 </head>
 
 <body>
+    <!-- Check if user is logged in -->
+    <script>
+        // Assuming you store the user's email in local storage upon login
+        const userEmail = window.localStorage.getItem('userEmail');
+
+        if (!userEmail || userEmail == '') {
+            window.location.href = 'login.html'; // Redirect to login if not logged in
+        }
+    </script>
 
     <div class="content">
         <!-- Top-right buttons: Edit Graph and Logout -->
         <div class="top-right-buttons">
             <button class="edit-btn" onclick="location.href='edit.html'">Edit Graph</button>
-            <button class="logout-btn" onclick="location.href='logout.html'">Logout</button>
+            <button class="logout-btn" onclick="location.href='login.html'">Logout</button>
         </div>
 
-        <h2>Expense Graph with Economy Rate Impact</h2>
+        <h2>Expense Graph</h2>
         <!-- Increase the size of the canvas for a larger graph -->
         <canvas id="expenseChart" width="800" height="400"></canvas>
         <button class="btn" id="savePdfBtn">Save as PDF</button>
     </div>
 
     <script>
-        const savedData = JSON.parse(window.localStorage.getItem('expenseData'));
+        const email = window.localStorage.getItem('userEmail');
+        fetchData(email).then((savedData) => {
+        const useableData = JSON.parse(savedData);
+        
+        if (!useableData || !useableData.expenses) {
+            alert('No expense data found');
+            return;
+        }
 
-        const labels = savedData.expenses.map(expense => expense.title);
-        const dataValues = savedData.expenses.map(expense => expense.amount);
-
+        // Map the expense titles and amounts from the fetched data
+        const labels = useableData.expenses.map(expense => expense.title);
+        const dataValues = useableData.expenses.map(expense => expense.amount);
+        const dailyValues = useableData.expenses.map(expense => expense.dailyData);
         // Hardcoded economy rate impact (simulated values)
         const economyRateImpact = [1.05, 1.02, 1.03, 1.04, 1.06, 1.03]; // Hypothetical yearly growth rate
 
         // Create a dynamic dataset for each expense with different colors
-        const datasets = savedData.expenses.map((expense, index) => {
+        const datasets = useableData.expenses.map((expense, index) => {
             // Simulate economy rate impact on the expense data for each expense
             const simulatedData = Array(6).fill(0).map((_, i) => expense.amount * economyRateImpact[i]);
 
             return {
                 label: expense.title,
                 data: simulatedData,
-                borderColor: `hsl(${index * 60}, 70%, 50%)`, // Different colors
+                borderColor: `hsl(${index * 60}, 70%, 50%)`, // Different colors for each expense
                 borderWidth: 2,
                 fill: false,
                 tension: 0.1
@@ -143,6 +161,12 @@
                         }
                     }
                 }
+                ,onClick: function(event, elements) {
+                    if (elements.length > 0) {
+                        var elementIndex = elements[0]._index;
+                        alert('You clicked on: ' + myChart.data.labels[elementIndex]);
+                    }
+                }
             }
         });
 
@@ -161,6 +185,7 @@
             // Save the PDF file
             pdf.save('expense_report.pdf');
         });
+    });
     </script>
 
 </body>

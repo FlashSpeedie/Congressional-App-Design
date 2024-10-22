@@ -10,7 +10,7 @@
     <!-- Tailwind CSS for styling -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-
+    <script src="sqlInteraction.js"></script>
     <style>
         body {
             font-family: 'Lato', sans-serif;
@@ -112,6 +112,16 @@
             background-color: #004d40;
         }
 
+        .extra-btn {
+            font-family: 'Lato', sans-serif;
+            background-color: #00796b;
+            color: white;
+            text-align: center;
+            padding: .5rem;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
         .delete-btn {
             color: red;
             font-size: 1.5rem;
@@ -127,6 +137,56 @@
             padding: 20px;
             background-color: #00796b;
             color: white;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: red;
+        }
+
+        .modal-body {
+            margin-top: 20px;
+        }
+
+        .modal-body input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -137,20 +197,35 @@
         <h1>Expense Tracker</h1>
     </div>
 
+    <!-- Main Content -->
     <div class="content">
-
-        <!-- Manage Daily & Average Expenses Section -->
+        <!-- Manage Expenses Section -->
         <div class="section">
-            <h2 class="section-title">Manage Daily & Average Expenses</h2>
-
-            <div id="expenseTable"></div>
-
-            <button class="btn" id="addRow">+ Add Expense</button>
+            <h2 class="section-title">Manage Expenses</h2>
+            <div id="expenseTable">
+                <!-- Placeholder for dynamically added rows -->
+            </div>
+            <button class="btn add-row-btn" id="addRow">+ Add Expense</button>
         </div>
 
         <!-- Submit Button -->
         <div class="section" style="text-align: center;">
-            <button class="btn" id="submitBtn">Submit & Save</button>
+            <button class="btn" id="submitBtn" style="width: 100%; padding: 15px 20px; font-size: 1.2rem;">Submit & Save</button>
+        </div>
+
+    </div>
+
+    <!-- Modal for Daily Data Input -->
+    <div id="dailyDataModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Enter Daily Data</h3>
+                <span class="close-btn" id="closeModal">&times;</span>
+            </div>
+            <div id="modal-body">
+                <!-- Placeholder for dynamically added rows -->
+            </div>
+            <button class="btn" id="addDailyData">Add</button>
         </div>
     </div>
 
@@ -159,95 +234,144 @@
     </footer>
 
     <script>
-        let rowCount = 0;
+        const email = window.localStorage.getItem('userEmail');
 
-        // Function to add a new expense row
-        function addExpenseRow(expense = { name: '', percentage: 0, amount: '', date: '', influence: 'positive' }) {
-            rowCount++;
-            const newRow = document.createElement('div');
-            newRow.classList.add('table-row');
-            newRow.innerHTML = `
-                <input type="text" value="${expense.name}" placeholder="Expense Name" class="expense-name">
-                <div class="input-box">
-                    <input type="range" min="0" max="100" value="${expense.percentage}" class="expense-slider" id="slider${rowCount}">
-                    <span class="percent-sign">${expense.percentage}%</span>
-                </div>
-                <input type="number" value="${expense.amount}" placeholder="Amount" class="expense-amount">
-                <input type="date" value="${expense.date}" class="expense-date">
-                <select class="expense-influence">
-                    <option value="positive" ${expense.influence === 'positive' ? 'selected' : ''}>Positive</option>
-                    <option value="negative" ${expense.influence === 'negative' ? 'selected' : ''}>Negative</option>
-                </select>
-                <i class="delete-btn" onclick="confirmDelete(this)">🗑️</i>
-            `;
-            document.getElementById('expenseTable').appendChild(newRow);
-
-            // Initialize slider interaction
-            const slider = document.getElementById(`slider${rowCount}`);
-            slider.oninput = function () {
-                this.nextElementSibling.innerText = `${this.value}%`;
-            };
-        }
-
-        // Load data from localStorage when the page loads
-        window.onload = function () {
-            const savedData = localStorage.getItem('expenseData');
-            if (savedData) {
-                const expenseData = JSON.parse(savedData);
-                expenseData.expenses.forEach(expense => {
-                    addExpenseRow(expense);
-                });
-            } else {
-                addExpenseRow();  // Add an empty row if no data exists
+        alert(email);
+        fetchData(email).then((savedData) => {
+            const useableData = JSON.parse(savedData);
+            if (!useableData || !useableData.expenses) {
+                alert('No expense data found');
+                return;
             }
-        };
 
-        // Add new expense row dynamically
-        document.getElementById('addRow').addEventListener('click', () => {
-            addExpenseRow();  // Add empty row on click
-        });
+            // Map the expense titles and amounts from the fetched data
+            const labels = useableData.expenses.map(expense => expense.title);
+            const dataValues = useableData.expenses.map(expense => expense.amount);
+            const influenceValues = useableData.expenses.map(expense => expense.influence);
+            const dailyDataValues = useableData.expenses.map(expense => expense.dailyData);
 
-        // Confirm delete functionality
-        function confirmDelete(deleteIcon) {
-            if (confirm('Are you sure you want to delete this row?')) {
-                deleteIcon.closest('.table-row').remove();
+
+            for (var i = 0; i < labels.length; i++){
+                addRow(labels[i], dataValues[i], influenceValues[i], dailyDataValues[i]);
             }
-        }
 
-        // Save Data to localStorage
-        document.getElementById('submitBtn').addEventListener('click', () => {
-            const rows = document.querySelectorAll('.table-row');
-            const expenses = [];
+            let currentRow; // Store the current row for which we're adding daily data
 
-            rows.forEach((row) => {
-                const name = row.querySelector('.expense-name').value;
-                const percentage = row.querySelector('.expense-slider').value;
-                const amount = row.querySelector('.expense-amount').value;
-                const date = row.querySelector('.expense-date').value;
-                const influence = row.querySelector('.expense-influence').value;
-
-                if (name && percentage && amount) {
-                    expenses.push({
-                        name,
-                        percentage,
-                        amount,
-                        date,
-                        influence
-                    });
-                }
+            // Add a new expense row dynamically
+            document.getElementById('addRow').addEventListener('click', () => {
+                addRow('','','','');
             });
 
-            const data = {
-                timestamp: new Date().toISOString(),
-                expenses
-            };
+            function addRow(name, amount, influence, savedDailyData) {
+                const newRow = document.createElement('div');
+                newRow.classList.add('table-row');
+                newRow.innerHTML = `
+                    <input type="text" value="${name}" placeholder="Expense Name" class="expense-name">
+                    <input type="number" value="${amount}" placeholder="Average Amount" class="expense-amount">
+                    <select class="expense-influence">
+                        <option value="positive" ${influence === 'positive' ? 'selected' : ''}>Positive</option>
+                        <option value="negative" ${influence === 'negative' ? 'selected' : ''}>Negative</option>
+                    </select>
+                    <i class="extra-btn" onclick="showExtra()">Daily Data</i>
+                    <i class="delete-btn" onclick="confirmDelete(this)">🗑️</i>
+                `;
+                let dailyData = newRow.querySelector('.daily-data');
+                
+                if (!dailyData) {
+                    dailyData = document.createElement('input');
+                    dailyData.type = 'hidden';
+                    dailyData.classList.add('daily-data');
+                    newRow.appendChild(dailyData);
+                }
 
-            // Save the data to localStorage
-            localStorage.setItem('expenseData', JSON.stringify(data));
-            alert('Data saved successfully to local storage!');
+                dailyData.value = JSON.stringify(savedDailyData, null, 2);
+
+                document.getElementById('expenseTable').appendChild(newRow);
+            }
+
+            // Show the modal for daily data input
+            function showExtra() {
+                document.getElementById('dailyDataModal').style.display = 'flex';
+                // Store the current row where Daily Data is being added
+                currentRow = event.target.closest('.table-row');
+                const data = currentRow.querySelector('.daily-data') ? JSON.parse(currentRow.querySelector('.daily-data').value) : [];
+                
+                const dates = data.map(i => i.date);
+                const amounts = data.map(i => i.amount);
+                
+                for (var i = 0; i < dates.length; i++){
+                    addModalRow(dates[i], amounts[i]);
+                }
+            }
+
+            // Close the modal when the close button is clicked
+            document.getElementById('closeModal').addEventListener('click', () => {
+                const data = [...document.querySelectorAll('.modal-row')].map(row => ({
+                    date: row.querySelector('.modal-row-date').value,
+                    amount: row.querySelector('.modal-row-amount').value,
+                }));
+                let dailyData = currentRow.querySelector('.daily-data');
+                
+                if (!dailyData) {
+                    dailyData = document.createElement('input');
+                    dailyData.type = 'hidden';
+                    dailyData.classList.add('daily-data');
+                    currentRow.appendChild(dailyData);
+                }
+
+                dailyData.value = JSON.stringify(data, null, 2);
+
+
+                document.getElementById('modal-body').replaceChildren('');
+
+                document.getElementById('dailyDataModal').style.display = 'none';
+            });
+
+            function addModalRow(date, amount){
+                const newRow = document.createElement('div');
+                newRow.classList.add('modal-row');
+                newRow.innerHTML = `
+                    <input type="date" value="${date}" placeholder="Enter Date" class="modal-row-date">
+                    <input type="number" value="${amount}" placeholder="Enter Amount" class="modal-row-amount">
+                    <i class="delete-btn" onclick="confirmDelete(this)">🗑️</i>
+                `;
+                document.getElementById('modal-body').appendChild(newRow);
+            }
+
+            // Add Daily Data and associate it with the current row
+            document.getElementById('addDailyData').addEventListener('click', () => {
+                addModalRow('','');
+            });
+
+            function confirmDelete(el) {
+                const confirmDel = confirm("Delete this entry?");
+                if (confirmDel) {
+                    el.parentNode.remove();
+                }
+            }
+
+            document.getElementById('submitBtn').addEventListener('click', () => {
+                const expenses = [...document.querySelectorAll('.table-row')].map(row => ({
+                    title: row.querySelector('.expense-name').value,
+                    amount: row.querySelector('.expense-amount').value,
+                    influence: row.querySelector('.expense-influence').value,
+                    dailyData: row.querySelector('.daily-data') ? JSON.parse(row.querySelector('.daily-data').value) : []
+                }));
+
+                const userData = {
+                    email: window.localStorage.getItem('userEmail'),
+                    expenses: expenses
+                };
+
+                const dataStr = JSON.stringify(userData, null, 2);
+
+                window.location.href = 'graph.html';
+                postData(window.localStorage.getItem('userEmail'), dataStr).then(() => {
+                    alert('Saved data successfully');
+                });
+            });
         });
     </script>
-
 </body>
 
 </html>

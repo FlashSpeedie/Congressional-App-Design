@@ -123,7 +123,7 @@
         <!-- Register Form (Initially hidden) -->
         <div id="registerForm" class="form-hidden">
             <h1 class="form-title">Create Your Account</h1>
-            <form method="POST" action="register.html">
+            <form method="POST" action="register.html" onsubmit="redirectToEditPage(event)">
                 <div class="input-field">
                     <label class="input-label" for="fullName">Full Name</label>
                     <input type="text" id="fullName" name="fullName" class="input-box" required>
@@ -159,6 +159,15 @@
             // Slide the register form out and show the login form
             document.getElementById('registerForm').classList.add('form-hidden');
             document.getElementById('loginForm').classList.remove('form-hidden');
+        }
+
+        function redirectToEditPage(event) {
+            event.preventDefault(); // Prevent actual form submission
+            // Simulate successful submission
+            const email = document.getElementById('email').value;
+            window.localStorage.setItem("userEmail",email)
+            window.location.href = 'edit.html'; // Redirect to the edit page
+            
         }
     </script>
 </body>
