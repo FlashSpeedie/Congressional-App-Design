@@ -128,6 +128,12 @@
             cursor: pointer;
         }
 
+        .delete-modal-btn {
+            color: red;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
         .dollar-sign {
             margin-right: 5px;
         }
@@ -235,8 +241,6 @@
 
     <script>
         const email = window.localStorage.getItem('userEmail');
-
-        alert(email);
         fetchData(email).then((savedData) => {
             const useableData = JSON.parse(savedData);
             if (!useableData || !useableData.expenses) {
@@ -273,7 +277,7 @@
                         <option value="negative" ${influence === 'negative' ? 'selected' : ''}>Negative</option>
                     </select>
                     <i class="extra-btn" onclick="showExtra()">Daily Data</i>
-                    <i class="delete-btn" onclick="confirmDelete(this)">🗑️</i>
+                    <i class="delete-btn">🗑️</i>
                 `;
                 let dailyData = newRow.querySelector('.daily-data');
                 
@@ -289,17 +293,24 @@
                 document.getElementById('expenseTable').appendChild(newRow);
             }
 
-            // Show the modal for daily data input
-            function showExtra() {
+            document.addEventListener('click', function (event) {
+                if (event.target.classList.contains('extra-btn')) {
+                    showExtra(event.target);
+                }
+            });
+
+            function showExtra(buttonElement) {
                 document.getElementById('dailyDataModal').style.display = 'flex';
-                // Store the current row where Daily Data is being added
-                currentRow = event.target.closest('.table-row');
-                const data = currentRow.querySelector('.daily-data') ? JSON.parse(currentRow.querySelector('.daily-data').value) : [];
+                
+                currentRow = buttonElement.closest('.table-row');
+                const data = currentRow.querySelector('.daily-data') 
+                    ? JSON.parse(currentRow.querySelector('.daily-data').value) 
+                    : [];
                 
                 const dates = data.map(i => i.date);
                 const amounts = data.map(i => i.amount);
                 
-                for (var i = 0; i < dates.length; i++){
+                for (var i = 0; i < dates.length; i++) {
                     addModalRow(dates[i], amounts[i]);
                 }
             }
@@ -333,7 +344,7 @@
                 newRow.innerHTML = `
                     <input type="date" value="${date}" placeholder="Enter Date" class="modal-row-date">
                     <input type="number" value="${amount}" placeholder="Enter Amount" class="modal-row-amount">
-                    <i class="delete-btn" onclick="confirmDelete(this)">🗑️</i>
+                    <i class="delete-modal-btn">🗑️</i>
                 `;
                 document.getElementById('modal-body').appendChild(newRow);
             }
@@ -343,28 +354,40 @@
                 addModalRow('','');
             });
 
-            function confirmDelete(el) {
-                const confirmDel = confirm("Delete this entry?");
-                if (confirmDel) {
-                    el.parentNode.remove();
+            document.addEventListener('click', function (event) {
+                if (event.target.classList.contains('delete-modal-btn')) {
+                    const confirmDel = confirm("Delete this entry?");
+                    if (confirmDel) {
+                        event.target.closest('.modal-row').remove();
+                    }
                 }
-            }
+            });
+
+            document.addEventListener('click', function (event) {
+                if (event.target.classList.contains('delete-btn')) {
+                    const confirmDel = confirm("Delete this entry?");
+                    if (confirmDel) {
+                        event.target.closest('.table-row').remove();
+                    }
+                }
+            });
 
             document.getElementById('submitBtn').addEventListener('click', () => {
+                alert('first');
                 const expenses = [...document.querySelectorAll('.table-row')].map(row => ({
                     title: row.querySelector('.expense-name').value,
                     amount: row.querySelector('.expense-amount').value,
                     influence: row.querySelector('.expense-influence').value,
                     dailyData: row.querySelector('.daily-data') ? JSON.parse(row.querySelector('.daily-data').value) : []
                 }));
-
+                alert('first');
                 const userData = {
                     email: window.localStorage.getItem('userEmail'),
                     expenses: expenses
                 };
-
+                alert('first');
                 const dataStr = JSON.stringify(userData, null, 2);
-
+                alert('first');
                 window.location.href = 'graph.html';
                 postData(window.localStorage.getItem('userEmail'), dataStr).then(() => {
                     alert('Saved data successfully');

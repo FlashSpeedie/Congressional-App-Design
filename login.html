@@ -203,10 +203,10 @@
     <div class="container" id="container">
         <!-- Sign Up Form -->
         <div class="form-container sign-up-container">
-            <form action="register.php" method="POST" class="form" onsubmit="redirectToEditPage(event)">
+            <form action="register.php" method="POST" class="form">
                 <h1>Create Account</h1>
                 <input type="text" name="fullName" placeholder="Full Name" required />
-                <input type="email" name="email" placeholder="Email" required />
+                <input id = "email2" type="email" name="email" placeholder="Email" required />
                 <input type="text" name="phone" placeholder="Phone Number" />
                 <input type="password" name="password" placeholder="Password" required />
                 <button type="submit">Sign Up</button>
@@ -215,9 +215,9 @@
 
         <!-- Sign In Form -->
         <div class="form-container sign-in-container">
-            <form action="login.php" method="POST" class="form" onsubmit="redirectToEditPage(event)">
+            <form action="login.php" method="POST" class="form">
                 <h1>Sign in</h1>
-                <input type="email" name="email" placeholder="Email" required />
+                <input id="email" type="email" name="email" placeholder="Email" required />
                 <input type="password" name="password" placeholder="Password" required />
                 <!-- <a href="#">Forgot your password?</a> -->
                 <button type="submit">Sign In</button>
@@ -242,30 +242,39 @@
     </div>
 
     <script>
-        const container = document.getElementById('container');
-        const signUpButton = document.getElementById('signUp');
-        const signInButton = document.getElementById('signIn');
+        document.addEventListener('DOMContentLoaded', function () {
+            const container = document.getElementById('container');
+            const signUpButton = document.getElementById('signUp');
+            const signInButton = document.getElementById('signIn');
 
-        signUpButton.addEventListener('click', () => {
-            container.classList.add("right-panel-active");
+            signUpButton.addEventListener('click', () => {
+                container.classList.add("right-panel-active");
+            });
+
+            signInButton.addEventListener('click', () => {
+                container.classList.remove("right-panel-active");
+            });
+
+            localStorage.setItem('userEmail', '');
+           
+            const signUpForm = document.querySelector('.sign-up-container form');
+            signUpForm.addEventListener('submit', function (event) {
+                const signUpEmail = document.getElementById('email2').value;
+                alert('Sign Up Email:'+ signUpEmail);
+
+                window.localStorage.setItem('userEmail', signUpEmail);
+                window.location.href = 'edit.html';
+            });
+
+            const signInForm = document.querySelector('.sign-in-container form');
+            signInForm.addEventListener('submit', function (event) {
+                const signInEmail = document.getElementById('email').value;
+                alert('Sign In Email:'+ signInEmail);
+
+                window.localStorage.setItem('userEmail', signInEmail);
+                window.location.href = 'edit.html';
+            });
         });
-
-        signInButton.addEventListener('click', () => {
-            container.classList.remove("right-panel-active");
-        });
-
-        // Simulate redirection after form submission
-        localStorage.setItem('userEmail', '');
-        function redirectToEditPage(event) {
-            event.preventDefault(); // Prevent actual form submission
-            // Simulate successful submission
-            const email = document.getElementById('email').value;
-            alert(email);
-            window.localStorage.setItem("userEmail",email);
-            
-            // window.location.href = 'edit.html'; // Redirect to the edit page
-            
-        }
     </script>
 
 </body>

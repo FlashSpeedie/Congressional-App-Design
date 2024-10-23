@@ -13,7 +13,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $row = mysqli_fetch_assoc($result);
         // Verify the password
         if (password_verify($password, $row['password'])) {
-            echo "Login successful!"; // In practice, redirect to a secure page.
+            // Redirect to edit.html on successful login
+            header('Location: edit.html');
+            exit(); // Always call exit after using header to stop script execution
         } else {
             echo "Invalid password!";
         }
