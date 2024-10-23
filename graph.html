@@ -147,6 +147,22 @@
                 return `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}/${date.getFullYear()}`;
             });
 
+            // Calculate the indices of the 3 evenly spaced dates between min and max
+            const totalDays = dateArray.length;
+            const interval = Math.floor(totalDays / 4); // 4 intervals create 5 evenly spaced labels (start, 3 middle, end)
+
+            const keyIndices = [
+                0, // First date
+                interval, // First intermediate date
+                interval * 2, // Second intermediate date
+                interval * 3, // Third intermediate date
+                totalDays - 1 // Last date
+            ];
+
+            const labels = formattedCompleteDatesArray.map((date, index) => {
+                return keyIndices.includes(index) ? date : ''; // Display only at key indices
+            });
+
             // Create datasets for each expense
             const datasets = useableData.expenses.map((expense) => {
                 const totalAmount = expense.amount; // Average amount
@@ -180,7 +196,7 @@
             const expenseChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: formattedCompleteDatesArray, // Use all dates for x-axis labels
+                    labels: labels, // Use the calculated labels with 5 evenly spaced dates
                     datasets: datasets
                 },
                 options: {
@@ -196,8 +212,7 @@
                             title: {
                                 display: true,
                                 text: 'Date'
-                            },
-                            
+                            }
                         }
                     }
                 }
