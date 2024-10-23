@@ -197,16 +197,7 @@
                                 display: true,
                                 text: 'Date'
                             },
-                            ticks: {
-                                callback: function(value, index, values) {
-                                    const totalLabels = values.length;
-                                    // Show every nth label to limit to 5 visible labels
-                                    if (index % Math.ceil(totalLabels / 5) === 0 || index === totalLabels - 1) {
-                                        return value; // Show this label
-                                    }
-                                    return ''; // Hide other labels
-                                }
-                            }
+                            
                         }
                     }
                 }
