@@ -114,27 +114,36 @@
             }
 
             // Prepare for graphs
-            const uniqueDates = new Set();
             const dailyValuesMap = {};
+            let minDate = Infinity;
+            let maxDate = -Infinity;
 
-            // Flatten and collect daily values while populating unique dates
+            // Flatten and collect daily values while determining min and max dates
             useableData.expenses.forEach(expense => {
                 const dailyData = expense.dailyData;
                 dailyData.forEach(data => {
-                    const dateKey = new Date(data.date).toDateString();
-                    uniqueDates.add(dateKey);
+                    const dateKey = new Date(data.date);
+                    const dateString = dateKey.toDateString();
+
+                    // Update min and max dates
+                    if (dateKey < minDate) minDate = dateKey;
+                    if (dateKey > maxDate) maxDate = dateKey;
+
                     if (!dailyValuesMap[expense.title]) {
                         dailyValuesMap[expense.title] = {};
                     }
-                    dailyValuesMap[expense.title][dateKey] = data.amount; // Map daily amount by expense title
+                    dailyValuesMap[expense.title][dateString] = data.amount; // Map daily amount by expense title
                 });
             });
 
-            // Create an ordered array of unique dates
-            const uniqueDatesArray = Array.from(uniqueDates).map(date => new Date(date)).sort((a, b) => a - b);
+            // Create a complete range of dates
+            const dateArray = [];
+            for (let d = new Date(minDate); d <= maxDate; d.setDate(d.getDate() + 1)) {
+                dateArray.push(new Date(d)); // Push a new date into the array
+            }
 
             // Convert dates back to the string format for labels
-            const formattedUniqueDatesArray = uniqueDatesArray.map(date => {
+            const formattedCompleteDatesArray = dateArray.map(date => {
                 return `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}/${date.getFullYear()}`;
             });
 
@@ -142,10 +151,16 @@
             const datasets = useableData.expenses.map((expense) => {
                 const totalAmount = expense.amount; // Average amount
 
-                const expenseData = formattedUniqueDatesArray.map(date => {
+                // Create the data array based on the complete date range
+                const expenseData = formattedCompleteDatesArray.map(date => {
                     const dateKey = new Date(date).toDateString();
                     const dailyAmount = dailyValuesMap[expense.title][dateKey];
-                    return dailyAmount !== undefined ? dailyAmount : totalAmount; // Use daily amount if available, else average
+
+                    if (dailyAmount !== undefined) {
+                        return dailyAmount; // Use daily amount if available
+                    }
+
+                    return totalAmount; // Use average if daily amount is not available
                 });
 
                 return {
@@ -165,7 +180,7 @@
             const expenseChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: formattedUniqueDatesArray, // Use formatted unique dates for x-axis labels
+                    labels: formattedCompleteDatesArray, // Use all dates for x-axis labels
                     datasets: datasets
                 },
                 options: {
@@ -183,12 +198,10 @@
                                 text: 'Date'
                             },
                             ticks: {
-                                // Custom ticks to show relevant dates
                                 callback: function(value, index, values) {
                                     const totalLabels = values.length;
-
-                                    // Limit visible labels to 5
-                                    if (index % Math.floor(totalLabels / 5) === 0 || index === totalLabels - 1) {
+                                    // Show every nth label to limit to 5 visible labels
+                                    if (index % Math.ceil(totalLabels / 5) === 0 || index === totalLabels - 1) {
                                         return value; // Show this label
                                     }
                                     return ''; // Hide other labels
@@ -215,6 +228,7 @@
                 pdf.save('expense_report.pdf');
             });
         });
+
     </script>
 
 </body>

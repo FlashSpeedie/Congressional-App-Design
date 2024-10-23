@@ -373,21 +373,17 @@
             });
 
             document.getElementById('submitBtn').addEventListener('click', () => {
-                alert('first');
                 const expenses = [...document.querySelectorAll('.table-row')].map(row => ({
                     title: row.querySelector('.expense-name').value,
                     amount: row.querySelector('.expense-amount').value,
                     influence: row.querySelector('.expense-influence').value,
                     dailyData: row.querySelector('.daily-data') ? JSON.parse(row.querySelector('.daily-data').value) : []
                 }));
-                alert('first');
                 const userData = {
                     email: window.localStorage.getItem('userEmail'),
                     expenses: expenses
                 };
-                alert('first');
                 const dataStr = JSON.stringify(userData, null, 2);
-                alert('first');
                 window.location.href = 'graph.html';
                 postData(window.localStorage.getItem('userEmail'), dataStr).then(() => {
                     alert('Saved data successfully');
